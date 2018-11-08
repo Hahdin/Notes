@@ -39,5 +39,18 @@ bill.set('name', 'Bill')
 console.log(tony.getInfo())
 console.log(bill.getInfo())
 console.log(mark.getInfo())
+/**
+ * 
+      Name: Tony 
+      ID: 3757
+
+      Name: Bill 
+      ID: 7034
+      
+      Name: Mark 
+      ID: 6160
+
+ */
+
 
 ```
