@@ -1,6 +1,4 @@
-# Notes
-Just some place for notes
-
+# 3 Kinds of Prototypal Inheritance
 ## Functional Inheritance for private data
 
 ```js
@@ -52,5 +50,47 @@ console.log(mark.getInfo())
 
  */
 
+
+```
+
+## Delegation / Differential Inheritance
+
+```js
+const obj1 ={
+  name: 'obj1',
+  unique: 'still 1'
+  
+}
+const obj2 ={
+  name: 'obj2',
+  
+}
+Object.assign(obj1,obj2)//2 overwites name in obj1
+console.log(obj1)
+/**
+ Object {name: "obj2", unique: "still 1"}
+*/
+```
+
+## Concatenative Inheritance / Cloning / Mixins
+```js
+
+const obj1 ={
+  name: 'obj1',
+  unique: 'still 1'
+  
+}
+const obj2 ={
+  name: 'obj2',
+}
+const newObj = {}
+Object.assign(newObj, obj1, obj2)
+console.log(obj1)//remains unchanged
+console.log(newObj)// new mix
+/**
+ Object {name: "obj1", unique: "still 1"}
+ Object {name: "obj2", unique: "still 1"}
+
+*/
 
 ```
