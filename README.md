@@ -99,7 +99,7 @@ console.log(newObj)// new mix
 
 ```
 
-# Proxy <a name="proto"></a>
+# Proxy <a name="proxy"></a>
 
 ```js
 
