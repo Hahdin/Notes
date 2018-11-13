@@ -1,4 +1,7 @@
-# 3 Kinds of Prototypal Inheritance
+[link](#abcd)
+---
+
+# 3 Kinds of Prototypal Inheritance <a name="abcd"></a>
 ## Functional Inheritance for private data
 
 ```js
