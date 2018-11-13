@@ -1,5 +1,5 @@
-[Inheritance](#proto)
-[Proxy](#proxy)
+- [Inheritance](#proto)
+- [Proxy](#proxy)
 ---
 
 # 3 Kinds of Prototypal Inheritance <a name="proto"></a>
