@@ -129,8 +129,8 @@ const invariant = (key, action) =>{
 let test = proxied()
 try{
   test.a = 'b'
-console.log(test.a) //<-- b
-test._prop
+  console.log(test.a) //<-- b
+  test._prop
 }
 catch(e){
   console.log(e) //<-- Error: Invalid attempt to get private "_prop" property
