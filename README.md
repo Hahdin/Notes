@@ -1,7 +1,8 @@
-[link](#abcd)
+[Inheritance](#proto)
+[Proxy](#proxy)
 ---
 
-# 3 Kinds of Prototypal Inheritance <a name="abcd"></a>
+# 3 Kinds of Prototypal Inheritance <a name="proto"></a>
 ## Functional Inheritance for private data
 
 ```js
@@ -96,4 +97,42 @@ console.log(newObj)// new mix
 
 */
 
+```
+
+# Proxy <a name="proto"></a>
+
+```js
+
+//Private data using Proxy
+
+const proxied =  () => {
+  var target = {}
+  var handler = {
+    get (target, key) {
+      invariant(key, 'get')
+      return target[key]
+    },
+    set (target, key, value) {
+      invariant(key, 'set')
+      target[key] = value
+      return true
+    }
+  }
+  return new Proxy(target, handler)
+}
+const invariant = (key, action) =>{
+  if (key[0] === '_') {
+    throw new Error(`Invalid attempt to ${action} private "${key}" property`)
+  }
+}
+
+let test = proxied()
+try{
+  test.a = 'b'
+console.log(test.a)
+test._prop
+}
+catch(e){
+  console.log(e)
+}
 ```
