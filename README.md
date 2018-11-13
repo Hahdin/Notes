@@ -28,6 +28,22 @@ const fakeClassObject = () =>{
       ID: ${_Data.private['id']}`
     }
   })
+  /**
+  or using the spread...
+  return (...this,
+    set(name,value) {
+      _Data.public[name] = value
+    },
+    get(name) {
+      return _Data.public[name]
+    },
+    //private
+    getInfo() {
+      return `
+      Name: ${_Data.public['name']} 
+      ID: ${_Data.private['id']}`
+    })
+  */
 }
 const fakeClass = () => fakeClassObject.call()
 
