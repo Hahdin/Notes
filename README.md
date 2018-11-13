@@ -128,7 +128,7 @@ const proxied =  () => {
   var handler = {
     get (target, key) {
       invariant(key, 'get')
-      return key.search(/id/i) === 0 ? target._prop[key] : target[key]
+      return key.search(/id/i) === 0 ? target._prop['id'] : target[key]
     },
     set (target, key, value) {
       invariant(key, 'set')
