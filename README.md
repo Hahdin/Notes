@@ -106,15 +106,31 @@ console.log(newObj)// new mix
 //Private data using Proxy
 
 const proxied =  () => {
-  var target = {}
+  var target = {
+    _prop: {id: Math.round(Math.random() * 1000)}
+  }
   var handler = {
     get (target, key) {
       invariant(key, 'get')
-      return target[key]
+      return key.search(/id/i) === 0 ? target._prop[key] : target[key]
     },
     set (target, key, value) {
       invariant(key, 'set')
       target[key] = value
+      return true
+    },
+    has(target, key){
+      if (key[0] === '_') {
+        return false
+      }
+      return key in target
+    },
+    deleteProperty (target, key) {
+      invariant(key, 'delete')
+      return true
+    },
+    defineProperty (target, key, descriptor) {
+      invariant(key, 'define')
       return true
     }
   }
@@ -129,10 +145,32 @@ const invariant = (key, action) =>{
 let test = proxied()
 try{
   test.a = 'b'
-  console.log(test.a) //<-- b
-  test._prop
+  console.log(test.a)
+  console.log(`is _prop in test? ${'_prop' in test}`)//<< cannot even see it
+  console.log(`ID: ${test.id}`) //private id accessible via get handler 
+  test.id = 'changed id'//allowed..
+  console.log(`ID: ${test.id} still`)//but won't be accessible, superceded by private
+  for (let key in test) {// cannot hide from loops though - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler/enumerate
+    console.log(`test[${key}]`)
+  }
+  test._prop = 'test' //Throw - cannot set it
+  //test._prop //Throw -  cannot access it
+  //delete test._prop //Throw - cannot delete it
 }
 catch(e){
-  console.log(e) //<-- Error: Invalid attempt to get private "_prop" property
+  console.log(e)
 }
+/**
+
+b
+is _prop in test? false
+ID: 590
+ID: 590 still
+test[_prop]
+test[a]
+test[id]
+Error: Invalid attempt to set private "_prop" property
+
+*/
+
 ```
