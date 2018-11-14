@@ -190,3 +190,116 @@ Error: Invalid attempt to set private "_prop" property
 */
 
 ```
+
+# ProxyEvent <a name="proxye"></a>
+```js
+//https://javascript.info/mixins
+let eventMixin = {
+  /**
+   * Subscribe to event, usage:
+   *  menu.on('select', function(item) { ... }
+  */
+  on(eventName, handler) {
+    if (!this._eventHandlers) this._eventHandlers = {};
+    if (!this._eventHandlers[eventName]) {
+      this._eventHandlers[eventName] = [];
+    }
+    this._eventHandlers[eventName].push(handler);
+  },
+  /**
+   * Cancel the subscription, usage:
+   *  menu.off('select', handler)
+   */
+  off(eventName, handler) {
+    let handlers = this._eventHandlers && this._eventHandlers[eventName];
+    if (!handlers) return;
+    for (let i = 0; i < handlers.length; i++) {
+      if (handlers[i] === handler) {
+        handlers.splice(i--, 1);
+      }
+    }
+  },
+  /**
+   * Generate the event and attach the data to it
+   *  this.trigger('select', data1, data2);
+   */
+  trigger(eventName, ...args) {
+    if (!this._eventHandlers || !this._eventHandlers[eventName]) {
+      return; // no handlers for that event name
+    }
+    // call the handlers
+    this._eventHandlers[eventName].forEach(handler => handler.apply(this, args));
+  }
+}
+
+const proxyEvent = (args) =>{
+  let target = Object.assign({}, args)
+  let handler = Object.assign({},  {
+    accum : 0,
+    setCount : 0,
+    getCount : 0,
+    get (target, key) {
+      this.getCount ++
+      return target[key]
+    },
+    set (target, key, value) {
+      if (key === 'value'){
+        if (value === -999.25){
+          throw new Error(`Illegal value [ ${value} ]`)
+        }
+        this.setCount ++
+        this.accum += value
+        console.log(`accumulated value: ${this.accum} from ${this.setCount} sets`)
+      }
+      target[key] = value
+      return true
+    },
+    has(target, key){
+      return key in target
+    },
+    deleteProperty (target, key) {
+      return true
+    },
+    defineProperty (target, key, descriptor) {
+      return true
+    }
+  })
+  return new Proxy(target, handler)
+}
+
+//create an object that has some action you wish to emit an event
+let myObj = Object.assign({}, eventMixin, {
+  value: 0,
+  select(value){
+    this.value = value
+    this.trigger('select', value)//trigger the event
+  }
+})
+
+const myProxyEvent = proxyEvent(myObj)
+myProxyEvent.on('select', value => console.log(`value is ${value}`))
+try{
+  let count = 5
+  while(count--){
+    myProxyEvent.select(Math.random() * 10000)
+  }
+  myProxyEvent.select(-999.25)
+}
+catch(e){
+  console.log(e)
+}
+
+/**
+accumulated value: 4735.3172779006145 from 1 sets
+value is 4735.3172779006145
+accumulated value: 8290.485097516677 from 2 sets
+value is 3555.167819616063
+accumulated value: 10934.188161566253 from 3 sets
+value is 2643.7030640495764
+accumulated value: 12905.823055446239 from 4 sets
+value is 1971.6348938799854
+accumulated value: 20261.303036288773 from 5 sets
+value is 7355.479980842532
+Error: Illegal value [ -999.25 ]
+*/
+```
