@@ -464,7 +464,11 @@ const myEncodeDecoder = new EncodeDecode("☸☹☺☻☼☾☿");
 
 myEncodeDecoder.encodeString();
 console.log(`Encoded String: ${myEncodeDecoder.theEncodedString}`);
+/* Encoded String: OCY5JjomOyY8Jj4mPyY= */
 myEncodeDecoder.decodeString();
 console.log(`Decoded String: ${myEncodeDecoder.theDecodedString}`);
+/* Decoded String: ☸☹☺☻☼☾☿ */
 console.log(` equal? : ${myEncodeDecoder.theString === myEncodeDecoder.theDecodedString}`)
+/* equal? : true */
+
 ```
