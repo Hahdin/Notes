@@ -399,7 +399,8 @@ class EncodeDecode {
       */
       nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
       if (nMod3 === 2 || aBytes.length - nIdx === 1) {
-        sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
+        sB64Enc += 
+          String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
         nUint24 = 0;
       }
       this.encodedString = eqLen === 0 ?
@@ -548,9 +549,10 @@ class EncodeDecode {
    * Decode the Base64 encoded string
    */
   decodeString() {
-    this.decodedString = this.UTF8 ? this.base64DecToArr(2) : String.fromCharCode.apply(null, new Uint16Array(this.base64DecToArr(2)));
+    this.decodedString = this.UTF8 ?
+      this.base64DecToArr(2) :
+      String.fromCharCode.apply(null, new Uint16Array(this.base64DecToArr(2)));
   }
-
 }
 /* Testing */
 // construct with string to encode
