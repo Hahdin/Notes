@@ -555,7 +555,6 @@ class EncodeDecode {
 /* Testing */
 // construct with string to encode
 const myEncodeDecoder = new EncodeDecode("☸☹☺☻☼☾☿");
-
 myEncodeDecoder.encodeString();
 console.log(`Encoded String: ${myEncodeDecoder.theEncodedString}`);
 /* Encoded String: OCY5JjomOyY8Jj4mPyY= */
@@ -565,4 +564,19 @@ console.log(`Decoded String: ${myEncodeDecoder.theDecodedString}`);
 console.log(` equal? : ${myEncodeDecoder.theString === myEncodeDecoder.theDecodedString}`)
 /* equal? : true */
 
+/** 
+ * Gensuite example
+ */
+const ukey = 'C214DB31-5056-8D05-F42546BC91522C78';
+const secret = 'CBB5A63A-B667-4703-A4FF92E5A2884A30';
+const ourString = `${ukey}${secret}`;
+const gsuiteEncode = new EncodeDecode(ourString, true);
+gsuiteEncode.encodeString();
+console.log(`Encoded String: ${gsuiteEncode.theEncodedString}`);
+/* Encoded String: QzIxNERCMzEtNTA1Ni04RDA1LUY0MjU0NkJDOTE1MjJDNzhDQkI1QTYzQS1CNjY3LTQ3MDMtQTRGRjkyRTVBMjg4NEEzMA== */
+gsuiteEncode.decodeString();
+console.log(`Decoded String: ${gsuiteEncode.theDecodedString}`);
+/* Decoded String: C214DB31-5056-8D05-F42546BC91522C78CBB5A63A-B667-4703-A4FF92E5A2884A30 */
+console.log(` equal? : ${gsuiteEncode.theString === gsuiteEncode.theDecodedString}`)
+/* equal? : true */
 ```
