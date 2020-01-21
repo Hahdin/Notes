@@ -311,12 +311,15 @@ Error: Illegal value [ -999.25 ]
 /**
  * The "Unicode Problem"
 Since DOMStrings are 16-bit-encoded strings, in most browsers calling window.btoa on a
-Unicode string will cause a Character Out Of Range exception if a character exceeds the range of a 8-bit byte (0x00~0xFF).
+Unicode string will cause a Character Out Of Range exception if a character exceeds 
+the range of a 8-bit byte (0x00~0xFF).
 
 JavaScript's UTF-16 => base64
 -----------------------------
-A very fast and widely useable way to solve the unicode problem is by encoding JavaScript native UTF-16 strings directly into base64.
-This method is particularly efficient because it does not require any type of conversion, except mapping a string into an array. 
+A very fast and widely useable way to solve the unicode problem is by encoding 
+JavaScript native UTF-16 strings directly into base64.  This method is particularly 
+efficient because it does not require any type of conversion, except mapping a 
+string into an array. 
 
 The following code is also useful to get an ArrayBuffer from a Base64 string and/or viceversa
  */
@@ -342,11 +345,7 @@ class EncodeDecode {
   get theDecodedString() {
     return this.decodedString;
   }
-  /** 
-   *  Base64 string to array encoding
-   */
-
-  /**
+    /**
    * Base64 string to array encoding
    * @param {UINT} nUint6 
    */
