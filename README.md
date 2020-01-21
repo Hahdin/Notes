@@ -1,6 +1,7 @@
 - [Inheritance](#proto)
 - [Proxy](#proxy)
 - [ProxyEvent](#proxye)
+- [Base64 encode/decode](#encodedecode)
 ---
 
 # 3 Kinds of Prototypal Inheritance <a name="proto"></a>
@@ -303,4 +304,168 @@ accumulated value: 20261.303036288773 from 5 sets
 value is 7355.479980842532
 Error: Illegal value [ -999.25 ]
 */
+```
+
+# Base64 encode/decode <a name="encodedecode"></a>
+```js
+/**
+ * The "Unicode Problem"
+Since DOMStrings are 16-bit-encoded strings, in most browsers calling window.btoa on a
+Unicode string will cause a Character Out Of Range exception if a character exceeds the range of a 8-bit byte (0x00~0xFF).
+
+JavaScript's UTF-16 => base64
+-----------------------------
+A very fast and widely useable way to solve the unicode problem is by encoding JavaScript native UTF-16 strings directly into base64.
+This method is particularly efficient because it does not require any type of conversion, except mapping a string into an array. 
+
+The following code is also useful to get an ArrayBuffer from a Base64 string and/or viceversa
+ */
+
+"use strict";
+
+class EncodeDecode {
+  constructor(encodeThis) {
+    this.stringToEncode = encodeThis;
+  }
+  /**
+   * Getters
+   */
+  get theString() {
+    return this.stringToEncode;
+  }
+  get UTF16CodeUnits() {
+    return this.aUTF16CodeUnits;
+  }
+  get theEncodedString() {
+    return this.encodedString;
+  }
+  get theDecodedString() {
+    return this.decodedString;
+  }
+  /** 
+   *  Base64 string to array encoding
+   */
+
+  /**
+   * Base64 string to array encoding
+   * @param {UINT} nUint6 
+   */
+  uint6ToB64(nUint6) {
+    return nUint6 < 26 ?
+      nUint6 + 65
+      : nUint6 < 52 ?
+        nUint6 + 71
+        : nUint6 < 62 ?
+          nUint6 - 4
+          : nUint6 === 62 ?
+            43
+            : nUint6 === 63 ?
+              47
+              :
+              65;
+  }
+  /**
+   * Array of bytes to base64 string decoding
+   * @param {number} nChr character code
+   */
+  b64ToUint6(nChr) {
+    return nChr > 64 && nChr < 91 ?
+      nChr - 65
+      : nChr > 96 && nChr < 123 ?
+        nChr - 71
+        : nChr > 47 && nChr < 58 ?
+          nChr + 4
+          : nChr === 43 ?
+            62
+            : nChr === 47 ?
+              63
+              :
+              0;
+  }
+
+   /**
+    * Encode an Array
+    * @param {array} aBytes Uint8Array buffer
+    */
+  base64EncArr(aBytes) {
+    let eqLen = (3 - (aBytes.length % 3)) % 3, sB64Enc = "";
+    for (let nMod3, nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
+      nMod3 = nIdx % 3;
+      const uint6ToB64 = this.uint6ToB64;
+      /* Uncomment the following line in order to split the output in lines 76-character long: */
+      /*
+      if (nIdx > 0 && (nIdx * 4 / 3) % 76 === 0) { sB64Enc += "\r\n"; }
+      */
+      nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
+      if (nMod3 === 2 || aBytes.length - nIdx === 1) {
+        sB64Enc += String.fromCharCode(uint6ToB64(nUint24 >>> 18 & 63), uint6ToB64(nUint24 >>> 12 & 63), uint6ToB64(nUint24 >>> 6 & 63), uint6ToB64(nUint24 & 63));
+        nUint24 = 0;
+      }
+      this.encodedString = eqLen === 0 ?
+        sB64Enc
+        :
+        sB64Enc.substring(0, sB64Enc.length - eqLen) + (eqLen === 1 ? "=" : "==");
+    }
+
+  }
+  /**
+   *  Encode to base64 using native UTF-16
+   */
+  toBase64() {
+    let aUTF16CodeUnits = new Uint16Array(this.stringToEncode.length);
+    const self = this;
+    Array.prototype.forEach.call(aUTF16CodeUnits, function (el, idx, arr) { arr[idx] = self.stringToEncode.charCodeAt(idx); });
+    this.aUTF16CodeUnits = aUTF16CodeUnits;
+    this.base64EncArr(new Uint8Array(aUTF16CodeUnits.buffer));
+  }
+
+  /**
+   * Decode the encodedString
+   * 
+   * @param {number} nBlockSize 
+   */
+  base64DecToArr(nBlockSize) {
+    let
+      sB64Enc = this.encodedString.replace(/[^A-Za-z0-9\+\/]/g, ""), nInLen = sB64Enc.length,
+      nOutLen = nBlockSize ? Math.ceil((nInLen * 3 + 1 >>> 2) / nBlockSize) * nBlockSize : nInLen * 3 + 1 >>> 2, aBytes = new Uint8Array(nOutLen);
+
+    for (let nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
+      nMod4 = nInIdx & 3;
+      nUint24 |= this.b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+      if (nMod4 === 3 || nInLen - nInIdx === 1) {
+        for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++ , nOutIdx++) {
+          aBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+        }
+        nUint24 = 0;
+      }
+    }
+    return aBytes.buffer;
+  }
+
+  /**
+   * Encode a string as Base64
+   */
+  encodeString() {
+    this.toBase64();
+  }
+
+  /**
+   * Decode the Base64 encoded string
+   */
+  decodeString() {
+    const nArray = new Uint16Array(this.base64DecToArr(2));
+    this.decodedString = String.fromCharCode.apply(null, new Uint16Array(this.base64DecToArr(2)));
+  }
+
+}
+
+/* Testing */
+// construct with string to encode
+const myEncodeDecoder = new EncodeDecode("☸☹☺☻☼☾☿");
+
+myEncodeDecoder.encodeString();
+console.log(`Encoded String: ${myEncodeDecoder.theEncodedString}`);
+myEncodeDecoder.decodeString();
+console.log(`Decoded String: ${myEncodeDecoder.theDecodedString}`);
+console.log(` equal? : ${myEncodeDecoder.theString === myEncodeDecoder.theDecodedString}`)
 ```
