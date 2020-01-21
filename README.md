@@ -347,10 +347,6 @@ class EncodeDecode {
   get theDecodedString() {
     return this.decodedString;
   }
-  /** 
-   *  Base64 string to array encoding
-   */
-
   /**
    * Base64 string to array encoding
    * @param {UINT} nUint6 
